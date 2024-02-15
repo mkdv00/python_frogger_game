@@ -27,8 +27,11 @@ while True:
     # frame rate
     dt = clock.tick() / 1000
     
+    # draw the background
+    screen.fill('black')
+    
     # updates
-    all_sprites.update()
+    all_sprites.update(dt)
     
     # graphics
     all_sprites.draw(surface=screen)
