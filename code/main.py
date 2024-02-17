@@ -27,8 +27,8 @@ while True:
     # frame rate
     dt = clock.tick() / 1000
     
-    # draw the background
-    screen.fill('black')
+    # background
+    screen.fill(color='black')
     
     # updates
     all_sprites.update(dt)
@@ -38,3 +38,4 @@ while True:
     
     # update the frame
     pygame.display.update()
+    
