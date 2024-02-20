@@ -23,7 +23,7 @@ class Car(pygame.sprite.Sprite):
             self.direction = pygame.math.Vector2(-1, 0)
             self.image = pygame.transform.flip(surface=self.image, flip_x=True, flip_y=False)
             
-        self.speed = 300
+        self.speed = 0
     
     def update(self, dt):
         self.pos += self.direction * self.speed * dt
