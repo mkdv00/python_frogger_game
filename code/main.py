@@ -1,8 +1,10 @@
-import pygame, sys
+import sys
+from random import choice, randint
 
-from settings import WINDOW_WIDTH, WINDOW_HEIGHT
-from player import Player
+import pygame
 from car import Car
+from player import Player
+from settings import CAR_START_POSITIONS, WINDOW_HEIGHT, WINDOW_WIDTH
 
 
 class AllSprites(pygame.sprite.Group):
@@ -39,7 +41,13 @@ all_sprites = AllSprites()
 
 # sprites
 player = Player(pos=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), groups=all_sprites)
-car = Car(pos=(600, 200), groups=all_sprites)
+
+# car timer
+car_timer = pygame.event.custom_type()
+pygame.time.set_timer(event=car_timer, millis=50)
+
+# cars positions
+car_pos_list = []
 
 # game loop
 while True:
@@ -49,6 +57,17 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        
+        if event.type == car_timer:
+            random_pos = choice(CAR_START_POSITIONS)
+            pos = (random_pos[0], random_pos[1] + randint(-10, 10))
+            
+            if random_pos not in car_pos_list:
+                car_pos_list.append(random_pos)
+                Car(pos=pos, groups=all_sprites)
+            
+            if len(car_pos_list) > 5:
+                del car_pos_list[0]
     
     # frame rate
     dt = clock.tick() / 1000
