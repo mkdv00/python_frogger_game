@@ -4,7 +4,8 @@ from random import choice, randint
 import pygame
 from car import Car
 from player import Player
-from settings import CAR_START_POSITIONS, WINDOW_HEIGHT, WINDOW_WIDTH
+from settings import *
+from sprite import SimpleSprite, LongSprite
 
 
 class AllSprites(pygame.sprite.Group):
@@ -40,7 +41,7 @@ clock = pygame.time.Clock()
 all_sprites = AllSprites()
 
 # sprites
-player = Player(pos=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), groups=all_sprites)
+player = Player(pos=(2062, 3274), groups=all_sprites)
 
 # car timer
 car_timer = pygame.event.custom_type()
@@ -48,6 +49,23 @@ pygame.time.set_timer(event=car_timer, millis=50)
 
 # cars positions
 car_pos_list = []
+
+# sprite setup
+# simple objects
+for file_name, pos_list in SIMPLE_OBJECTS.items():
+    path = f'graphics/objects/simple/{file_name}.png'
+    surf = pygame.image.load(file=path).convert_alpha()
+    
+    for pos in pos_list:
+        SimpleSprite(surf=surf, pos=pos, groups=all_sprites)
+
+# long objects
+for file_name, pos_list in LONG_OBJECTS.items():
+    path = f'graphics/objects/long/{file_name}.png'
+    surf = pygame.image.load(file=path).convert_alpha()
+    
+    for pos in pos_list:
+        LongSprite(surf=surf, pos=pos, groups=all_sprites)
 
 # game loop
 while True:
