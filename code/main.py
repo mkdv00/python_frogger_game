@@ -94,11 +94,12 @@ while True:
     # background
     screen.fill(color='black')
     
-    # updates
-    all_sprites.update(dt)
-    
-    # graphics
-    all_sprites.customize_draw()
+    if player.pos.y >= 1180:
+        # updates
+        all_sprites.update(dt)
+        
+        # graphics
+        all_sprites.customize_draw()
     
     # update the frame
     pygame.display.update()

@@ -127,7 +127,24 @@ class Player(pygame.sprite.Sprite):
         
         self.image = current_animation[int(self.frame_index)]
     
+    def restrict(self):
+        if self.rect.left < 640:
+            self.pos.x = 640 + self.rect.width / 2
+            self.hitbox.left = 640
+            self.rect.left = self.hitbox.left
+        
+        if self.rect.right > 2560:
+            self.pos.x = 2560 - self.rect.width / 2
+            self.hitbox.right = 2560
+            self.rect.left = self.hitbox.left
+        
+        if self.rect.bottom > 3500:
+            self.pos.y = 3500 - self.rect.height / 2
+            self.rect.bottom = 3500
+            self.hitbox.centery = self.rect.centery
+    
     def update(self, dt):
         self.input()
         self.move(dt)
         self.animate(dt)
+        self.restrict()
