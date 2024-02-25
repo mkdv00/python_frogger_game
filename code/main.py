@@ -66,7 +66,7 @@ for file_name, pos_list in LONG_OBJECTS.items():
     surf = pygame.image.load(file=path).convert_alpha()
     
     for pos in pos_list:
-        LongSprite(surf=surf, pos=pos, groups=all_sprites)
+        LongSprite(surf=surf, pos=pos, groups=[all_sprites, obstacles_group])
 
 # game loop
 while True:

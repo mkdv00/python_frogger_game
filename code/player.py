@@ -2,6 +2,7 @@ import sys
 from os import walk
 
 import pygame
+from pygame import Rect, Surface
 
 
 class Player(pygame.sprite.Sprite):
@@ -14,8 +15,8 @@ class Player(pygame.sprite.Sprite):
         
         self.frame_index = 0
         self.state = 'down'
-        self.image = self.animations[self.state][self.frame_index]
-        self.rect = self.image.get_rect(center=pos)
+        self.image: Surface = self.animations[self.state][self.frame_index]
+        self.rect: Rect = self.image.get_rect(center=pos)
         
         # float based movement
         self.pos = pygame.math.Vector2(self.rect.center)
@@ -24,38 +25,43 @@ class Player(pygame.sprite.Sprite):
         
         # collision
         self.collision_sprites = collision_sprites
+        self.hitbox: Rect = self.rect.inflate(0, -self.rect.height / 2)
     
     def collision(self, direction):
         if direction == 'horizontal':
             for sprite in self.collision_sprites.sprites():
-                if sprite.rect.colliderect(self.rect):
+                if sprite.hitbox.colliderect(self.hitbox):
                     if hasattr(sprite, 'name') and sprite.name == 'car':
                         pygame.quit()
                         sys.exit()
                     
                     # if move right
                     if self.direction.x > 0:
-                        self.rect.right = sprite.rect.left
-                        self.pos.x = self.rect.centerx
+                        self.hitbox.right = sprite.hitbox.left
+                        self.rect.centerx = self.hitbox.centerx
+                        self.pos.x = self.hitbox.centerx
                     # if move left
                     if self.direction.x < 0:
-                        self.rect.left = sprite.rect.right
-                        self.pos.x = self.rect.centerx
+                        self.hitbox.left = sprite.hitbox.right
+                        self.rect.centerx = self.hitbox.centerx
+                        self.pos.x = self.hitbox.centerx
         else:
             for sprite in self.collision_sprites.sprites():
-                if sprite.rect.colliderect(self.rect):
+                if sprite.hitbox.colliderect(self.hitbox):
                     if hasattr(sprite, 'name') and sprite.name == 'car':
                         pygame.quit()
                         sys.exit()
                     
                     # if move down
                     if self.direction.y > 0:
-                        self.rect.bottom = sprite.rect.top
-                        self.pos.y = self.rect.centery
+                        self.hitbox.bottom = sprite.hitbox.top
+                        self.rect.centery = self.hitbox.centery
+                        self.pos.y = self.hitbox.centery
                     # if move up
                     if self.direction.y < 0:
-                        self.rect.top = sprite.rect.bottom
-                        self.pos.y = self.rect.centery
+                        self.hitbox.top = sprite.hitbox.bottom
+                        self.rect.centery = self.hitbox.centery
+                        self.pos.y = self.hitbox.centery
     
     def import_assets(self):
         self.animations = {}
@@ -76,12 +82,14 @@ class Player(pygame.sprite.Sprite):
             
         # horizontal movement + collisions
         self.pos.x += self.direction.x * self.speed * dt
-        self.rect.centerx = round(self.pos.x)
+        self.hitbox.centerx = round(self.pos.x)
+        self.rect.centerx = self.hitbox.centerx
         self.collision(direction='horizontal')
         
         # vertical movement + collisions
         self.pos.y += self.direction.y * self.speed * dt
-        self.rect.centery = round(self.pos.y)
+        self.hitbox.centery = round(self.pos.y)
+        self.rect.centery = self.hitbox.centery
         self.collision(direction='vertical')
     
     def input(self):
