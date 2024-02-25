@@ -1,11 +1,12 @@
-import pygame
-
+import sys
 from os import walk
+
+import pygame
 
 
 class Player(pygame.sprite.Sprite):
     
-    def __init__(self, pos, groups):
+    def __init__(self, pos, groups, collision_sprites):
         super().__init__(groups)
         
         # image
@@ -20,6 +21,41 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.direction = pygame.math.Vector2()
         self.speed = 250
+        
+        # collision
+        self.collision_sprites = collision_sprites
+    
+    def collision(self, direction):
+        if direction == 'horizontal':
+            for sprite in self.collision_sprites.sprites():
+                if sprite.rect.colliderect(self.rect):
+                    if hasattr(sprite, 'name') and sprite.name == 'car':
+                        pygame.quit()
+                        sys.exit()
+                    
+                    # if move right
+                    if self.direction.x > 0:
+                        self.rect.right = sprite.rect.left
+                        self.pos.x = self.rect.centerx
+                    # if move left
+                    if self.direction.x < 0:
+                        self.rect.left = sprite.rect.right
+                        self.pos.x = self.rect.centerx
+        else:
+            for sprite in self.collision_sprites.sprites():
+                if sprite.rect.colliderect(self.rect):
+                    if hasattr(sprite, 'name') and sprite.name == 'car':
+                        pygame.quit()
+                        sys.exit()
+                    
+                    # if move down
+                    if self.direction.y > 0:
+                        self.rect.bottom = sprite.rect.top
+                        self.pos.y = self.rect.centery
+                    # if move up
+                    if self.direction.y < 0:
+                        self.rect.top = sprite.rect.bottom
+                        self.pos.y = self.rect.centery
     
     def import_assets(self):
         self.animations = {}
@@ -37,9 +73,16 @@ class Player(pygame.sprite.Sprite):
     def move(self, dt):
         if self.direction.magnitude():
             self.direction = self.direction.normalize()
+            
+        # horizontal movement + collisions
+        self.pos.x += self.direction.x * self.speed * dt
+        self.rect.centerx = round(self.pos.x)
+        self.collision(direction='horizontal')
         
-        self.pos += self.direction * self.speed * dt
-        self.rect.center = (round(self.pos.x), round(self.pos.y))
+        # vertical movement + collisions
+        self.pos.y += self.direction.y * self.speed * dt
+        self.rect.centery = round(self.pos.y)
+        self.collision(direction='vertical')
     
     def input(self):
         keys = pygame.key.get_pressed()

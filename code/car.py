@@ -9,6 +9,8 @@ class Car(pygame.sprite.Sprite):
     def __init__(self, pos, groups):
         super().__init__(groups)
         
+        self.name = 'car'
+        
         # image
         car_name = choice(list(walk('graphics/cars'))[0][2])
         self.image = pygame.image.load(file=f'graphics/cars/{car_name}').convert_alpha()

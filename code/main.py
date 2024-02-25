@@ -5,7 +5,7 @@ import pygame
 from car import Car
 from player import Player
 from settings import *
-from sprite import SimpleSprite, LongSprite
+from sprite import LongSprite, SimpleSprite
 
 
 class AllSprites(pygame.sprite.Group):
@@ -39,9 +39,10 @@ clock = pygame.time.Clock()
 
 # groups
 all_sprites = AllSprites()
+obstacles_group = pygame.sprite.Group()
 
 # sprites
-player = Player(pos=(2062, 3274), groups=all_sprites)
+player = Player(pos=(2062, 3274), groups=all_sprites, collision_sprites=obstacles_group)
 
 # car timer
 car_timer = pygame.event.custom_type()
@@ -57,7 +58,7 @@ for file_name, pos_list in SIMPLE_OBJECTS.items():
     surf = pygame.image.load(file=path).convert_alpha()
     
     for pos in pos_list:
-        SimpleSprite(surf=surf, pos=pos, groups=all_sprites)
+        SimpleSprite(surf=surf, pos=pos, groups=[all_sprites, obstacles_group])
 
 # long objects
 for file_name, pos_list in LONG_OBJECTS.items():
@@ -82,7 +83,7 @@ while True:
             
             if random_pos not in car_pos_list:
                 car_pos_list.append(random_pos)
-                Car(pos=pos, groups=all_sprites)
+                Car(pos=pos, groups=[all_sprites, obstacles_group])
             
             if len(car_pos_list) > 5:
                 del car_pos_list[0]
