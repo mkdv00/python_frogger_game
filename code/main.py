@@ -26,6 +26,7 @@ class AllSprites(pygame.sprite.Group):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_pos = sprite.rect.topleft - self.offset
             screen.blit(source=sprite.image, dest=offset_pos)
+            pygame.draw.rect(surface=screen, color=(255, 255, 255), rect=sprite.hitbox, width=10)
         
         # fraw fg
         screen.blit(source=self.fg, dest=-self.offset)
@@ -50,6 +51,15 @@ pygame.time.set_timer(event=car_timer, millis=50)
 
 # cars positions
 car_pos_list = []
+
+# font
+font = pygame.font.Font(None, size=50)
+text_surf = font.render(text='You won!', antialias=True, color='White')
+text_rect = text_surf.get_rect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
+# music
+bg_music = pygame.mixer.Sound(file='audio/music.mp3')
+bg_music.play(loops= -1)
 
 # sprite setup
 # simple objects
@@ -95,11 +105,15 @@ while True:
     screen.fill(color='black')
     
     if player.pos.y >= 1180:
-        # updates
+        # updatesa
         all_sprites.update(dt)
         
         # graphics
         all_sprites.customize_draw()
+    else:
+        screen.fill(color='teal')
+        screen.blit(source=text_surf, dest=text_rect)
+        pygame.draw.rect(surface=screen, color='White', rect=text_rect.inflate(30, 30), width=8, border_radius=5)
     
     # update the frame
     pygame.display.update()
